@@ -1,0 +1,17 @@
+<h1>Application for <%= @application.name %></h1>
+<p>Submitted: <%= @application.created_at %></p>
+<h4>Address</h4>
+<p><%= @application.street_address %></p>
+<p><%= @application.city %>, <%= @application.state %> <%= @application.zip_code %></p>
+<h4>Description</h4>
+<p><%= @application.description %></p>
+<h4>Pets</h4>
+<p><% @application.pets.each_with_index do |pet, index| %>
+  <% if (index + 1) == @application.pets.count %>
+    <%= link_to "#{pet.name}", "/pets/#{pet.id}" %>
+  <% else %>
+    <%= link_to "#{pet.name}", "/pets/#{pet.id}" %>,
+  <% end %>
+<% end %></p>
+<h4>Application Status</h4>
+<p><%= @application.status %></p>
