@@ -18,4 +18,45 @@ RSpec.describe Application, type: :model do
   describe 'enum' do
     it { should define_enum_for(:status).with_values([:in_progress, :pending, :accepted, :rejected]) }
   end
+
+  describe 'methods' do
+    it '.submit' do
+      application = Application.create!(name: 'Natalie',
+                                          street_address: '1234 Random St',
+                                          city: 'Englewood',
+                                          state: 'CO',
+                                          zip_code: '80205')
+
+      expect(application.description).to eq('')
+      expect(application.status).to eq('in_progress')
+
+      application.submit('I have a yard')
+
+      expect(application.description).to eq('I have a yard')
+      expect(application.status).to eq('pending')
+    end
+
+    it '.add_pet' do
+      application = Application.create!(name: 'Natalie',
+                                          street_address: '1234 Random St',
+                                          city: 'Englewood',
+                                          state: 'CO',
+                                          zip_code: '80205')
+      shelter = Shelter.create!(name: 'Englewood Shelter',
+                                  city: 'Englewood CO',
+                                  foster_program: false,
+                                  rank: 9)
+      pet_1 = Pet.create!(name: 'Alfie',
+                          age: 1,
+                          breed: 'Australian Shepard',
+                          adoptable: true,
+                          shelter_id: shelter.id)
+
+      expect(application.pets.count).to eq(0)
+
+      application.add_pet(pet_1.id)
+
+      expect(application.pets).to eq([pet_1])
+    end
+  end
 end
