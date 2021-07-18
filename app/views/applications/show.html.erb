@@ -1,47 +1,60 @@
 <section id='attributes'>
-<h1>Application for <%= @application.name %></h1>
-<p>Submitted: <%= @application.created_at %></p>
-
-<h4>Address</h4>
-<p><%= @application.street_address %></p>
-<p><%= @application.city %>, <%= @application.state %> <%= @application.zip_code %></p>
-
-<h4>Description</h4>
-<p><%= @application.description %></p>
-</section>
-
-<section id='selected_pets'>
-<h4>Pets</h4>
-<p><% @application.pets.each_with_index do |pet, index| %>
-  <% if (index + 1) == @application.pets.count %>
-    <%= link_to "#{pet.name}", "/pets/#{pet.id}" %>
-  <% else %>
-    <%= link_to "#{pet.name}", "/pets/#{pet.id}" %>,
+  <h1>Application for <%= @application.name %></h1>
+  <p><b>Submitted:</b> <%= @application.created_at %></p>
+  <p><b>Address:</b> <%= @application.street_address %> <%= @application.city %>, <%= @application.state %> <%= @application.zip_code %></p>
+  <% if @application.status != 'in_progress' %>
+    <p><b>Description:</b> <%= @application.description %></p>
   <% end %>
-<% end %></p>
+  <p><b>Application Status:</b> <%= @application.status %></p>
 </section>
 
-<section id='searched_pets'>
-<h4> Add a Pet to this Application</h4>
-<%= form_with url: "/applications/#{@application.id}", method: :get, local: true do |f| %>
-  <%= f.label :search %>
-  <%= f.text_field :search %>
-  <%= f.submit "Search" %>
+<% if @application.pets.count >= 1 %>
+  <section id='selected_pets'>
+    <p><b>Pets:</b> <% @application.pets.each_with_index do |pet, index| %>
+      <% if (index + 1) == @application.pets.count %>
+        <%= link_to "#{pet.name}", "/pets/#{pet.id}" %>
+        <% else %>
+        <%= link_to "#{pet.name}", "/pets/#{pet.id}" %>,
+        <% end %>
+    <% end %></p>
+  </section>
 <% end %>
 
-<% if @pet_results == :none %>
-  <div>
-<% elsif @pet_results.count == 0 %>
-  <p>No matching pets</p>
-<% else %>
-  <% @pet_results.each do |pet| %>
-    <p><%= pet.name %>
-    <%= button_to 'Adopt this Pet', "/applications/#{@application.id}", method: :get, params: { pet: pet.id } %></p>
-  <% end %>
-<% end %>
-</section>
+<% if @application.status == 'in_progress' %>
+  <section id='searched_pets'>
+    <br>
+    <h4>Add a Pet to this Application:</h4>
+    <%= form_with url: "/applications/#{@application.id}", method: :get, local: true do |f| %>
+      <%= f.label :search %>
+      <%= f.text_field :search %>
+      <%= f.submit "Search" %>
+      <% end %>
 
-<section id='status'>
-<h4>Application Status</h4>
-<p><%= @application.status %></p>
-</section>
+    <% if @pet_results == :none %>
+      <div>
+    <% elsif @pet_results.count == 0 %>
+      <p><b>No matching pets</b></p>
+    <% else %>
+      <% @pet_results.each do |pet| %>
+        <p>
+          <div style="float: left; width: auto;">
+            <b><%= pet.name %></b>&nbsp;&nbsp;
+          </div>
+          <%= button_to 'Adopt this Pet', "/applications/#{@application.id}", method: :get, params: { pet: pet.id }%>
+        </p>
+      <% end %>
+    <% end %>
+  </section>
+<% end %>
+
+<% if @application.pets.count >= 1 && @application.status == 'in_progress' %>
+  <br>
+  <section id='submit_application'>
+    <h4>Submit your application:</h4>
+    <%= form_with url: "/applications/#{@application.id}", method: :get, local: true do |f| %>
+      <%= f.label 'Why would you make a good owner for these pets?'%>
+      <%= f.text_field :description %>
+      <%= f.submit "Submit Application" %>
+      <% end %>
+  </section>
+<% end %>
