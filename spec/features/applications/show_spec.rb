@@ -27,37 +27,123 @@ RSpec.describe 'the application' do
                                         state: 'CO',
                                         zip_code: '80205',
                                         description: 'Because I love dogs!')
-    @application_1.pets << @pet_1
-    @application_1.pets << @pet_2
   end
-
   describe 'display' do
-    it 'shows the application and all its attributes' do
-      visit "/applications/#{@application_1.id}"
+    context 'attributes' do
+      it 'shows the application and all its attributes' do
+        @application_1.pets << @pet_1
+        @application_1.pets << @pet_2
 
-      expect(page).to have_content(@application_1.name)
-      expect(page).to have_content(@application_1.street_address)
-      expect(page).to have_content(@application_1.city)
-      expect(page).to have_content(@application_1.zip_code)
-      expect(page).to have_content(@application_1.description)
-      expect(page).to have_content(@pet_1.name)
-      expect(page).to have_content(@pet_2.name)
-      expect(page).to_not have_content(@pet_3.name)
-      expect(page).to have_content(@application_1.status)
+        visit "/applications/#{@application_1.id}"
+
+        within('#attributes') do
+          expect(page).to have_content(@application_1.name)
+          expect(page).to have_content(@application_1.street_address)
+          expect(page).to have_content(@application_1.city)
+          expect(page).to have_content(@application_1.zip_code)
+          expect(page).to have_content(@application_1.description)
+        end
+      end
+    end
+    context 'selected_pets and status' do
+      it 'shows pets selected and status of application' do
+        @application_1.pets << @pet_1
+        @application_1.pets << @pet_2
+
+        visit "/applications/#{@application_1.id}"
+
+        within('#selected_pets') do
+          expect(page).to have_content(@pet_1.name)
+          expect(page).to have_content(@pet_2.name)
+          expect(page).to_not have_content(@pet_3.name)
+        end
+      end
+    end
+    context 'status' do
+      it 'shows status of application' do
+        @application_1.pets << @pet_1
+        @application_1.pets << @pet_2
+
+        visit "/applications/#{@application_1.id}"
+
+        within('#status') do
+          expect(page).to have_content(@application_1.status)
+        end
+      end
     end
   end
+  describe 'functionality' do
+    context 'selected_pets' do
+      it 'selected pet names link to their pet show pages' do
+        @application_1.pets << @pet_1
+        @application_1.pets << @pet_2
 
-  describe 'hyperlinks' do
-    it 'pet names link to their pet show pages' do
-      visit "/applications/#{@application_1.id}"
-      click_on "#{@pet_1.name}"
+        visit "/applications/#{@application_1.id}"
 
-      expect(current_path).to eq("/pets/#{@pet_1.id}")
+        within('#selected_pets') do
+          click_on "#{@pet_1.name}"
+          expect(current_path).to eq("/pets/#{@pet_1.id}")
+        end
 
-      visit "/applications/#{@application_1.id}"
-      click_on "#{@pet_2.name}"
+        visit "/applications/#{@application_1.id}"
 
-      expect(current_path).to eq("/pets/#{@pet_2.id}")
+        within('#selected_pets') do
+          click_on "#{@pet_2.name}"
+          expect(current_path).to eq("/pets/#{@pet_2.id}")
+        end
+      end
+    end
+    context 'searched_pets' do
+      context 'exact match' do
+        it 'returns pet name' do
+          visit "/applications/#{@application_1.id}"
+
+          fill_in 'Search', with: 'Alfie'
+          click_button 'Search'
+
+          expect(current_path).to eq("/applications/#{@application_1.id}")
+
+          within('#searched_pets') do
+            expect(page).to have_content(@pet_1.name)
+            expect(page).to_not have_content(@pet_2.name)
+          end
+        end
+      end
+      context 'no match' do
+        it 'returns no matching pets' do
+          visit "/applications/#{@application_1.id}"
+
+          expect(page).to_not have_content("No matching pets")
+
+          fill_in 'Search', with: 'Bill'
+          click_button 'Search'
+
+          within('#searched_pets') do
+            expect(current_path).to eq("/applications/#{@application_1.id}")
+            expect(page).to have_content("No matching pets")
+          end
+        end
+      end
+      context 'search results buttons' do
+        it 'adopt this pet button adds pet to selected pets' do
+          visit "/applications/#{@application_1.id}"
+
+          fill_in 'Search', with: 'Alfie'
+          click_button 'Search'
+
+          within('#selected_pets') do
+            expect(page).to_not have_content(@pet_1.name)
+          end
+
+          click_button 'Adopt this Pet'
+
+          within('#selected_pets') do
+            expect(page).to have_content(@pet_1.name)
+            expect(page).to_not have_content(@pet_2.name)
+            expect(page).to_not have_content(@pet_3.name)
+          end
+        end
+      end
     end
   end
 end
