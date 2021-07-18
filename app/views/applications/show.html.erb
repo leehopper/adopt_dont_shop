@@ -1,6 +1,6 @@
 <section id='attributes'>
   <h1>Application for <%= @application.name %></h1>
-  <p><b>Submitted:</b> <%= @application.created_at %></p>
+  <p><b>Created:</b> <%= @application.created_at %></p>
   <p><b>Address:</b> <%= @application.street_address %> <%= @application.city %>, <%= @application.state %> <%= @application.zip_code %></p>
   <% if @application.status != 'in_progress' %>
     <p><b>Description:</b> <%= @application.description %></p>
