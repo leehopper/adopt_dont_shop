@@ -24,6 +24,7 @@ RSpec.describe 'the application' do
     @application_1 = Application.create!(name: 'Natalie',
                                         street_address: '1234 Random St',
                                         city: 'Englewood',
+                                        state: 'CO',
                                         zip_code: '80205',
                                         description: 'Because I love dogs!')
     @application_1.pets << @pet_1
