@@ -4,6 +4,7 @@ RSpec.describe Application, type: :model do
   describe 'relationships' do
     it { should have_many(:pet_applications) }
     it { should have_many(:pets).through(:pet_applications) }
+    it { should have_many(:shelters).through(:pets) }
   end
 
   describe 'validations' do
@@ -19,44 +20,45 @@ RSpec.describe Application, type: :model do
     it { should define_enum_for(:status).with_values([:in_progress, :pending, :accepted, :rejected]) }
   end
 
-  describe 'methods' do
-    it '.submit' do
-      application = Application.create!(name: 'Natalie',
-                                          street_address: '1234 Random St',
-                                          city: 'Englewood',
-                                          state: 'CO',
-                                          zip_code: '80205')
+  before(:each) do
+    @application = Application.create!(name: 'Natalie', street_address: '1234 Random St', city: 'Englewood', state: 'CO', zip_code: '80205')
+  end
 
-      expect(application.description).to eq('')
-      expect(application.status).to eq('in_progress')
+  describe 'class methods' do
+    describe '#pending_applications' do
+      it 'returns array of pending applications' do
+        application_2 = Application.create!(name: 'Lee', street_address: '1234 Random St', city: 'Denver', state: 'CO', zip_code: '80205', status: 'pending')
+        application_3 = Application.create!(name: 'Bill', street_address: '1234 Random St', city: 'Aurora', state: 'CO', zip_code: '80205', status: 'pending')
 
-      application.submit('I have a yard')
+        expect(Application.pending_applications).to eq([application_2, application_3])
+      end
+    end
+  end
 
-      expect(application.description).to eq('I have a yard')
-      expect(application.status).to eq('pending')
+  describe 'instance methods' do
+    describe '#submit' do
+      it 'updates application to pending with new description' do
+        expect(@application.description).to eq('')
+        expect(@application.status).to eq('in_progress')
+
+        @application.submit('I have a yard')
+
+        expect(@application.description).to eq('I have a yard')
+        expect(@application.status).to eq('pending')
+      end
     end
 
-    it '.add_pet' do
-      application = Application.create!(name: 'Natalie',
-                                          street_address: '1234 Random St',
-                                          city: 'Englewood',
-                                          state: 'CO',
-                                          zip_code: '80205')
-      shelter = Shelter.create!(name: 'Englewood Shelter',
-                                  city: 'Englewood CO',
-                                  foster_program: false,
-                                  rank: 9)
-      pet_1 = Pet.create!(name: 'Alfie',
-                          age: 1,
-                          breed: 'Australian Shepard',
-                          adoptable: true,
-                          shelter_id: shelter.id)
+    describe '#add_pet' do
+      it 'adds a pet to the application' do
+        shelter = Shelter.create!(name: 'Englewood Shelter', city: 'Englewood CO', foster_program: false, rank: 9)
+        pet_1 = Pet.create!(name: 'Alfie', age: 1, breed: 'Australian Shepard', adoptable: true, shelter_id: shelter.id)
 
-      expect(application.pets.count).to eq(0)
+        expect(@application.pets.count).to eq(0)
 
-      application.add_pet(pet_1.id)
+        @application.add_pet(pet_1.id)
 
-      expect(application.pets).to eq([pet_1])
+        expect(@application.pets).to eq([pet_1])
+      end
     end
   end
 end
