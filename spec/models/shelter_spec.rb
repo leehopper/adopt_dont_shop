@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe Shelter, type: :model do
   describe 'relationships' do
     it { should have_many(:pets) }
+    it { should have_many(:applications).through(:pets) }
   end
 
   describe 'validations' do
@@ -39,6 +40,30 @@ RSpec.describe Shelter, type: :model do
     describe '#order_by_number_of_pets' do
       it 'orders the shelters by number of pets they have, descending' do
         expect(Shelter.order_by_number_of_pets).to eq([@shelter_1, @shelter_3, @shelter_2])
+      end
+    end
+
+    describe '#order_by_reverse_alphabet' do
+      it 'orders the shelters reverse alphabetically by name' do
+        expect(Shelter.order_by_reverse_alphabet).to eq([@shelter_2, @shelter_3, @shelter_1])
+      end
+    end
+
+    describe '#order_by_alphabet' do
+      it 'orders the shelters alphabetically by name' do
+        expect(Shelter.order_by_alphabet).to eq([@shelter_1, @shelter_3, @shelter_2])
+      end
+    end
+
+    describe '#pending_apps' do
+      it 'returns shelters with pending applications' do
+        pet_5 = @shelter_2.pets.create(name: 'Alfie', breed: 'Australian Shepard', age: 1, adoptable: true)
+        application = Application.create!(name: 'Natalie', street_address: '1234 Random St', city: 'Englewood', state: 'CO', zip_code: '80205', status: 'pending')
+        application.pets << @pet_1
+        application.pets << @pet_2
+        application.pets << pet_5
+
+        expect(Shelter.pending_apps).to eq([@shelter_1, @shelter_2])
       end
     end
   end
