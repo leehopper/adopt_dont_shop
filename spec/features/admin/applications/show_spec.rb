@@ -21,10 +21,61 @@ RSpec.describe 'the admin application' do
                         breed: 'Labrador Retriever',
                         adoptable: true,
                         shelter_id: @shelter_1.id)
-    @application_1 = Application.create!(name: 'Natalie',
+    @application = Application.create!(name: 'Natalie',
                                         street_address: '1234 Random St',
                                         city: 'Englewood',
                                         state: 'CO',
-                                        zip_code: '80205')
+                                        zip_code: '80205',
+                                        description: 'Because I am the best',
+                                        status: 'pending')
+    @application.pets << @pet_1
+    @application.pets << @pet_2
+  end
+
+  it 'displays attributes' do
+    visit "/admin/applications/#{@application.id}"
+
+    expect(page).to have_content(@application.name)
+    expect(page).to have_content(@application.street_address)
+    expect(page).to have_content(@application.city)
+    expect(page).to have_content(@application.zip_code)
+    expect(page).to have_content(@application.status)
+    expect(page).to have_content(@application.description)
+  end
+
+  it 'displays all pets for the application' do
+    visit "/admin/applications/#{@application.id}"
+
+    expect(page).to have_content(@pet_1.name)
+    expect(page).to have_content(@pet_2.name)
+    expect(page).to_not have_content(@pet_3.name)
+  end
+
+  it 'displays approve and deny buttons for each pet' do
+    visit "/admin/applications/#{@application.id}"
+
+    within("#pet-#{@pet_1.id}") do
+      expect(page).to have_selector(:link_or_button, "Approve #{@pet_1.name}")
+      expect(page).to have_selector(:link_or_button, "Deny #{@pet_1.name}")
+    end
+
+    within("#pet-#{@pet_2.id}") do
+      expect(page).to have_selector(:link_or_button, "Approve #{@pet_2.name}")
+      expect(page).to have_selector(:link_or_button, "Deny #{@pet_2.name}")
+    end
+  end
+
+  xit 'approve pet removes button from page and indicates approval' do
+    visit "/admin/applications/#{@application.id}"
+
+    within("#pet-#{@pet_1.id}") do
+      click_button "Approve #{@pet_1.name}"
+    end
+
+    within("#pet-#{@pet_1.id}") do
+      expect(page).to_not have_selector(:link_or_button, "Approve #{@pet_1.name}")
+      expect(page).to_not have_selector(:link_or_button, "Deny #{@pet_1.name}")
+      expet(page).to have_content("#{@pet_1.name} - APPROVED")
+    end
   end
 end
