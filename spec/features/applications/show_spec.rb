@@ -179,7 +179,6 @@ RSpec.describe 'the application' do
           visit "/applications/#{@application_1.id}"
 
           click_button 'Submit Application'
-          save_and_open_page
 
           expect(page).to have_content("Error: Description can't be blank")
         end
