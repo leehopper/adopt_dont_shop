@@ -168,10 +168,20 @@ RSpec.describe 'the application' do
           click_button 'Submit Application'
 
           within('#attributes') do
-            expect(page).to have_content("Description: #{@application_1.description}")
+            expect(page).to have_content("Description: Reasons")
             expect(page).to have_content('Status: pending')
           end
           expect(page).to_not have_content("Submit your application:")
+        end
+
+        it 'invalid data' do
+          @application_1.pets << @pet_1
+          visit "/applications/#{@application_1.id}"
+
+          click_button 'Submit Application'
+          save_and_open_page
+
+          expect(page).to have_content("Error: Description can't be blank")
         end
       end
     end
