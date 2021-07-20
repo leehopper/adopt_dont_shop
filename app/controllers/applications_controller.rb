@@ -25,9 +25,8 @@ class ApplicationsController < ApplicationController
 
   def update
     application = Application.find(params[:id])
-    application.submit(params[:description])
 
-    if application.save
+    if application.submit(params[:description])
       redirect_to "/applications/#{application.id}"
     else
       redirect_to "/applications/#{application.id}"
