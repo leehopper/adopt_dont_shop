@@ -25,14 +25,6 @@ RSpec.describe Application, type: :model do
   end
 
   describe 'class methods' do
-    describe '#pending_applications' do
-      it 'returns array of pending applications' do
-        application_2 = Application.create!(name: 'Lee', street_address: '1234 Random St', city: 'Denver', state: 'CO', zip_code: '80205', status: 'pending')
-        application_3 = Application.create!(name: 'Bill', street_address: '1234 Random St', city: 'Aurora', state: 'CO', zip_code: '80205', status: 'pending')
-
-        expect(Application.pending_applications).to eq([application_2, application_3])
-      end
-    end
   end
 
   describe 'instance methods' do

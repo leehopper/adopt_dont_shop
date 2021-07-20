@@ -6,12 +6,8 @@ class Application < ApplicationRecord
   has_many :shelters, through: :pets
   enum status: [ :in_progress, :pending, :accepted, :rejected ]
 
-  def self.pending_applications
-    where(status: 'pending')
-  end
-
   def submit(new_description)
-    update_attributes(:description => new_description, :status => 'pending')
+    update!(description: new_description, status: 'pending')
   end
 
   def add_pet(new_pet)
