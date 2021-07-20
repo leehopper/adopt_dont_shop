@@ -1,0 +1,22 @@
+<h1>Admin Application Review</h1>
+
+<p><b>Applicant Name:</b> <%= @application.name %></p>
+
+<p><b>Address:</b> <%= @application.street_address %> <%= @application.city %>, <%= @application.state %> <%= @application.zip_code %></p>
+
+<p><b>Description:</b> <%= @application.description %></p>
+
+<p><b>Status:</b> <%= @application.status %></p>
+
+<br>
+<h3>Pets to approve or deny</h3>
+
+<% @pets.each.with_index do |pet, index| %>
+  <div id="pet-<%= pet.id %>"<p>
+    <b><%= (index + 1) %>. <%= pet.name %></b>
+    <div style="float: left; width: auto;">
+      <%= button_to "Approve #{pet.name}", "/admin/pet_applications/#{@application.id}", method: :patch, params: { pet: pet.id, status: 'approved' }%>
+    </div>
+    <%= button_to "Deny #{pet.name}", "/admin/applications/#{@application.id}", method: :get, params: { pet: pet.id }%>
+  </p></div>
+<% end %>
