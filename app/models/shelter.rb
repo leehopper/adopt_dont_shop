@@ -29,6 +29,10 @@ class Shelter < ApplicationRecord
     joins(:applications).where('applications.status = ?', 1).distinct
   end
 
+  def self.find_attributes(id)
+    find_by_sql([ "SELECT name, city FROM shelters WHERE id = ? LIMIT 1;", id ]).first
+  end
+
   def pet_count
     pets.count
   end

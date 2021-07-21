@@ -66,10 +66,17 @@ RSpec.describe Shelter, type: :model do
         expect(Shelter.pending_apps).to eq([@shelter_1, @shelter_2])
       end
     end
+
+    describe '#attributes' do
+      it 'returns the attributes of shelter using raw sql' do
+        expect(Shelter.find_attributes(@shelter_1.id).name).to eq(@shelter_1.name)
+        expect(Shelter.find_attributes(@shelter_1.id).city).to eq(@shelter_1.city)
+      end
+    end
   end
 
   describe 'instance methods' do
-    describe '.pet_count' do
+    describe 'pet_count' do
       it 'returns the number of pets at the given shelter' do
         expect(@shelter_1.pet_count).to eq(3)
       end
