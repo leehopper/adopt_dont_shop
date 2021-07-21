@@ -221,7 +221,6 @@ RSpec.describe 'the admin application' do
     click_button "Approve #{@pet_2.name}"
 
     visit "/admin/applications/#{application_2.id}"
-    save_and_open_page
 
     within("#pet-#{@pet_1.id}") do
       expect(page).to_not have_selector(:link_or_button, "Approve #{@pet_1.name}")

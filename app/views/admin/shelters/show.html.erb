@@ -1,0 +1,30 @@
+<h1><%= @attributes.name %></h1>
+<p><b>Location: </b><%= @attributes.city %></p>
+
+<section>
+  <h3>Statistics</h3>
+  <% if @adoptable_average_age > 0 %>
+    <p><b>Average Age of Adoptable Pets: </b><%= @adoptable_average_age %></p>
+    <p><b>Total Adoptable Pets: </b><%= @total_adoptable_pets %></p>
+    <p><b>Total Adopted Pets (from this shelter): </b><%= @total_pets_adopted %></p>
+  <% else %>
+    <p><b>NO PETS</b></p>
+  <% end %>
+</section>
+
+<br>
+<section id="action_required">
+  <h3>Action Required</h3>
+  <% if @pets_with_pending_app.count > 1 %>
+    <% @pets_with_pending_app.each.with_index do |pet, index| %>
+      <div id="pet-<%= pet.id %>"> 
+        <p><b><%= (index + 1) %>.</b> <%= pet.name %></p>
+        <% pet.applications.each do |app| %>
+          <%= button_to "#{app.name} Application", "/admin/applications/#{app.id}", method: :get %>
+        <% end %>
+      </div>
+    <% end %>
+  <% else %>
+    <p><b>No pets with pending applicaitons</b></p>
+  <% end %>
+</section>
