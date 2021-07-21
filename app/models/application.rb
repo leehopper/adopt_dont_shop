@@ -13,4 +13,12 @@ class Application < ApplicationRecord
   def add_pet(new_pet)
     pets << Pet.find(new_pet)
   end
+
+  def approved_pets
+    pets.where('pet_applications.approval_status = ?', 1)
+  end
+
+  def denied_pets
+    pets.where('pet_applications.approval_status = ?', 2)
+  end
 end
