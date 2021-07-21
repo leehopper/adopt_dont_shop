@@ -129,6 +129,26 @@ RSpec.describe Application, type: :model do
 
         expect(@application.status).to eq('accepted')
       end
+
+      it 'updates approved application pets to adoptable false' do
+        @application.add_pet(@pet_1.id)
+        @application.add_pet(@pet_2.id)
+        pet_application_1 = PetApplication.locate_record(@application.id, @pet_1.id)
+        pet_application_2 = PetApplication.locate_record(@application.id, @pet_2.id)
+        pet_application_1.approve
+        pet_application_2.approve
+
+        expect(@pet_1.adoptable).to eq(true)
+        expect(@pet_2.adoptable).to eq(true)
+
+        @application.approve?
+
+        updated_pet_1 = Pet.find(@pet_1.id)
+        updated_pet_2 = Pet.find(@pet_2.id)
+
+        expect(updated_pet_1.adoptable).to eq(false)
+        expect(updated_pet_2.adoptable).to eq(false)
+      end
     end
   end
 end

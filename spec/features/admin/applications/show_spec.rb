@@ -193,4 +193,19 @@ RSpec.describe 'the admin application' do
     expect(page).to_not have_content(@pet_1.name)
     expect(page).to_not have_content(@pet_2.name)
   end
+
+  it 'approving apps updates pet show page to no longer adoptable' do
+    visit "/pets/#{@pet_1.id}"
+    expect(page).to_not have_content('false')
+    expect(page).to have_content('true')
+
+    visit "/admin/applications/#{@application.id}"
+
+    click_button "Approve #{@pet_1.name}"
+    click_button "Approve #{@pet_2.name}"
+
+    visit "/pets/#{@pet_1.id}"
+    expect(page).to have_content('false')
+    expect(page).to_not have_content('true')
+  end
 end
