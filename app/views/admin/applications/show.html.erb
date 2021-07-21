@@ -9,7 +9,14 @@
 <% if @application.status == 'pending' %>
   <h3>Pets to approve or deny</h3>
   <% @all_pets.each.with_index do |pet, index| %>
-    <% if @approved_pets.include?(pet) %>
+    <% if pet.adoptable == false %>
+      <div id="pet-<%= pet.id %>"
+        <p>
+          <b><%= (index + 1) %>. <%= pet.name %></b> - <%= pet.name %> has been approved for adoption
+          <%= button_to "Deny #{pet.name}", "/admin/pet_applications/#{@application.id}", method: :patch, params: { pet: pet.id, status: 'denied' }%>
+        </p>
+      </div>
+    <% elsif @approved_pets.include?(pet) %>
       <div id="pet-<%= pet.id %>"
         <p>
           <b><%= (index + 1) %>. <%= pet.name %></b> - APPROVED
