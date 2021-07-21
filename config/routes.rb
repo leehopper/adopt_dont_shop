@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   resources :shelters, :pets, :veterinary_offices, :veterinarians
-  
+
   get '/', to: 'application#welcome'
 
   get '/applications/new', to: 'applications#new'
@@ -17,6 +17,8 @@ Rails.application.routes.draw do
   post '/veterinary_offices/:veterinary_office_id/veterinarians', to: 'veterinarians#create'
 
   get 'admin/shelters', to: 'admin/shelters#index'
+  get 'admin/shelters/:id', to: 'admin/shelters#show'
+
   get 'admin/applications/:id', to: 'admin/applications#show'
   patch 'admin/pet_applications/:id', to: 'admin/pet_applications#update'
 end
