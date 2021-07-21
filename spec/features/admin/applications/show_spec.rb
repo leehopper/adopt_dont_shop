@@ -65,7 +65,7 @@ RSpec.describe 'the admin application' do
     end
   end
 
-  xit 'approve pet removes button from page and indicates approval' do
+  it 'approve pet removes button from page and indicates approval' do
     visit "/admin/applications/#{@application.id}"
 
     within("#pet-#{@pet_1.id}") do
@@ -75,7 +75,46 @@ RSpec.describe 'the admin application' do
     within("#pet-#{@pet_1.id}") do
       expect(page).to_not have_selector(:link_or_button, "Approve #{@pet_1.name}")
       expect(page).to_not have_selector(:link_or_button, "Deny #{@pet_1.name}")
-      expet(page).to have_content("#{@pet_1.name} - APPROVED")
+      expect(page).to have_content("#{@pet_1.name} - APPROVED")
+    end
+  end
+
+  it 'deny pet removes both button from page and indicates approval' do
+    visit "/admin/applications/#{@application.id}"
+
+    within("#pet-#{@pet_1.id}") do
+      click_button "Deny #{@pet_1.name}"
+    end
+
+    within("#pet-#{@pet_1.id}") do
+      expect(page).to_not have_selector(:link_or_button, "Approve #{@pet_1.name}")
+      expect(page).to_not have_selector(:link_or_button, "Deny #{@pet_1.name}")
+      expect(page).to have_content("#{@pet_1.name} - DENIED")
+    end
+  end
+
+  it 'approving or dissaproving a pet on one application doesn not impact another' do
+    application_2 = Application.create!(name: 'Natalie', street_address: '1234 Random St', city: 'Englewood', state: 'CO', zip_code: '80205', description: 'Because I am the best', status: 'pending')
+
+    application_2.pets << @pet_1
+    application_2.pets << @pet_2
+
+    visit "/admin/applications/#{@application.id}"
+
+    within("#pet-#{@pet_1.id}") do
+      click_button "Deny #{@pet_1.name}"
+    end
+
+    visit "/admin/applications/#{application_2.id}"
+
+    within("#pet-#{@pet_1.id}") do
+      expect(page).to have_selector(:link_or_button, "Approve #{@pet_1.name}")
+      expect(page).to have_selector(:link_or_button, "Deny #{@pet_1.name}")
+    end
+
+    within("#pet-#{@pet_2.id}") do
+      expect(page).to have_selector(:link_or_button, "Approve #{@pet_2.name}")
+      expect(page).to have_selector(:link_or_button, "Deny #{@pet_2.name}")
     end
   end
 end
