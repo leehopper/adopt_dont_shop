@@ -22,12 +22,12 @@ RSpec.describe 'the admin application' do
                         adoptable: true,
                         shelter_id: @shelter_1.id)
     @application = Application.create!(name: 'Natalie',
-                                        street_address: '1234 Random St',
-                                        city: 'Englewood',
-                                        state: 'CO',
-                                        zip_code: '80205',
-                                        description: 'Because I am the best',
-                                        status: 'pending')
+                                      street_address: '1234 Random St',
+                                      city: 'Englewood',
+                                      state: 'CO',
+                                      zip_code: '80205',
+                                      description: 'Because I am the best',
+                                      status: 'pending')
     @application.pets << @pet_1
     @application.pets << @pet_2
   end
