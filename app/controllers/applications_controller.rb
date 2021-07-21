@@ -6,8 +6,6 @@ class ApplicationsController < ApplicationController
       @pet_results = Pet.search(params[:search])
     elsif params[:pet].present?
       @application.add_pet(params[:pet])
-    elsif params[:description].present?
-      @application.submit(params[:description])
     end
   end
 
@@ -21,6 +19,17 @@ class ApplicationsController < ApplicationController
       redirect_to "/applications/#{application.id}"
     else
       redirect_to '/applications/new'
+      flash[:alert] = "Error: #{error_message(application.errors)}"
+    end
+  end
+
+  def update
+    application = Application.find(params[:id])
+
+    if application.submit(params[:description])
+      redirect_to "/applications/#{application.id}"
+    else
+      redirect_to "/applications/#{application.id}"
       flash[:alert] = "Error: #{error_message(application.errors)}"
     end
   end
