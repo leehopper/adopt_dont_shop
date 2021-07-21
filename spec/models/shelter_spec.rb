@@ -69,9 +69,40 @@ RSpec.describe Shelter, type: :model do
   end
 
   describe 'instance methods' do
+    describe '.pet_count' do
+      it 'returns the number of pets at the given shelter' do
+        expect(@shelter_1.pet_count).to eq(3)
+      end
+    end
+
+    describe '.adoptable_pet_count' do
+      it 'returns the number of adoptable pets at the given shelter' do
+        expect(@shelter_1.adoptable_pet_count).to eq(2)
+      end
+    end
+
     describe '.adoptable_pets' do
       it 'only returns pets that are adoptable' do
         expect(@shelter_1.adoptable_pets).to eq([@pet_2, @pet_4])
+      end
+    end
+
+    describe '.pets_adopted_count' do
+      it 'returns the number of pets that are part of an approved application' do
+        application = Application.create!(name: 'Natalie', street_address: '1234 Random St', city: 'Englewood', state: 'CO', zip_code: '80205', status: 'pending')
+
+        application.pets << @pet_1
+        application.pets << @pet_2
+        application.submit('Test')
+
+        pet_app_1 = PetApplication.locate_record(application.id, @pet_1.id)
+        pet_app_2 = PetApplication.locate_record(application.id, @pet_2.id)
+
+        pet_app_1.approve
+        pet_app_2.approve
+        application.approve?
+
+        expect(@shelter_1.pets_adopted_count).to eq(2)
       end
     end
 
@@ -84,12 +115,6 @@ RSpec.describe Shelter, type: :model do
     describe '.shelter_pets_filtered_by_age' do
       it 'filters the shelter pets based on given params' do
         expect(@shelter_1.shelter_pets_filtered_by_age(5)).to eq([@pet_4])
-      end
-    end
-
-    describe '.pet_count' do
-      it 'returns the number of pets at the given shelter' do
-        expect(@shelter_1.pet_count).to eq(3)
       end
     end
 

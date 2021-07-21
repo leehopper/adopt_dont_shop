@@ -26,15 +26,23 @@ class Shelter < ApplicationRecord
   end
 
   def self.pending_apps
-    joins(:applications).where('applications.status' => 'pending').distinct
+    joins(:applications).where('applications.status = ?', 1).distinct
   end
 
   def pet_count
     pets.count
   end
 
+  def adoptable_pet_count
+    adoptable_pets.count
+  end
+
   def adoptable_pets
     pets.where(adoptable: true)
+  end
+
+  def pets_adopted_count
+    pets.joins(:applications).where('applications.status = ?', 2).distinct.count
   end
 
   def alphabetical_pets
