@@ -71,4 +71,28 @@ RSpec.describe 'the admin shelters index' do
 
     expect(first).to appear_before(second)
   end
+
+  describe 'hyperlinks' do
+    it 'links each shelter name to their show page' do
+      visit '/admin/shelters'
+
+      click_on "#{@shelter_1.name}"
+
+      expect(current_path).to eq("/admin/shelters/#{@shelter_1.id}")
+
+      pet_3 = @shelter_2.pets.create(name: 'Alfie', breed: 'Australian Shepard', age: 1, adoptable: true)
+      application = Application.create!(name: 'Natalie', street_address: '1234 Random St', city: 'Englewood', state: 'CO', zip_code: '80205')
+
+      application.pets << pet_3
+      application.submit('Pending shelter test')
+
+      visit '/admin/shelters'
+
+      within('#pending_shelters') do
+        click_on "#{@shelter_2.name}"
+
+        expect(current_path).to eq("/admin/shelters/#{@shelter_2.id}")
+      end
+    end
+  end
 end
