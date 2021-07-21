@@ -21,4 +21,8 @@ class Application < ApplicationRecord
   def denied_pets
     pets.where('pet_applications.approval_status = ?', 2)
   end
+
+  def pending_pets
+    pets.where('pet_applications.approval_status = ?', 0)
+  end
 end
