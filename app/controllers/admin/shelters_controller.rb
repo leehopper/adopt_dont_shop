@@ -11,5 +11,6 @@ class Admin::SheltersController < ApplicationController
     shelter = Shelter.find(params[:id])
     @adoptable_average_age = shelter.adoptable_average_age
     @total_adoptable_pets = shelter.adoptable_pet_count
+    @total_pets_adopted = shelter.pets_adopted_count
   end
 end

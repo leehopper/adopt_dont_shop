@@ -22,21 +22,39 @@ RSpec.describe 'the admin shelter show page' do
 
       visit "/admin/shelters/#{shelter_2.id}"
 
-      expect(page).to have_content("NO PETS")
+      expect(page).to have_content('NO PETS')
     end
 
     it 'displays average age of adoptable pets' do
       visit "/admin/shelters/#{@shelter_1.id}"
 
       expect(page).to have_content('Statistics')
-      expect(page).to have_content("Average Age of Adoptable Pets: 3")
+      expect(page).to have_content('Average Age of Adoptable Pets: 3')
     end
 
     it 'displays number of adoptable pets' do
       @pet_3.update(adoptable: false)
       visit "/admin/shelters/#{@shelter_1.id}"
 
-      expect(page).to have_content("Total Adoptable Pets: 2")
+      expect(page).to have_content('Total Adoptable Pets: 2')
+    end
+
+    it 'displays total pets adopted' do
+      @application.pets << @pet_1
+      @application.pets << @pet_2
+      @application.submit('Test')
+
+      pet_app_1 = PetApplication.locate_record(@application.id, @pet_1.id)
+      pet_app_2 = PetApplication.locate_record(@application.id, @pet_2.id)
+
+      pet_app_1.approve
+      pet_app_2.approve
+      @application.approve?
+
+      visit "/admin/shelters/#{@shelter_1.id}"
+
+      expect(page).to have_content('Total Adopted Pets (from this shelter): 2')
+      expect(page).to have_content('Total Adoptable Pets: 1')
     end
   end
 end
