@@ -89,5 +89,66 @@ RSpec.describe Application, type: :model do
         expect(@application.pending_pets).to eq([@pet_2])
       end
     end
+
+    describe '#approve?' do
+      it 'does not change status if some pets still pending' do
+        @application.add_pet(@pet_1.id)
+        @application.add_pet(@pet_2.id)
+        @application.submit('I love dogs')
+        pet_application_1 = PetApplication.locate_record(@application.id, @pet_1.id)
+        pet_application_2 = PetApplication.locate_record(@application.id, @pet_2.id)
+        pet_application_1.deny
+
+        @application.approve?
+
+        expect(@application.status).to eq('pending')
+      end
+
+      it 'denies the application if any pets denied' do
+        @application.add_pet(@pet_1.id)
+        @application.add_pet(@pet_2.id)
+        pet_application_1 = PetApplication.locate_record(@application.id, @pet_1.id)
+        pet_application_2 = PetApplication.locate_record(@application.id, @pet_2.id)
+        pet_application_1.deny
+        pet_application_2.approve
+
+        @application.approve?
+
+        expect(@application.status).to eq('rejected')
+      end
+
+      it 'accepts the application if all pets approved' do
+        @application.add_pet(@pet_1.id)
+        @application.add_pet(@pet_2.id)
+        pet_application_1 = PetApplication.locate_record(@application.id, @pet_1.id)
+        pet_application_2 = PetApplication.locate_record(@application.id, @pet_2.id)
+        pet_application_1.approve
+        pet_application_2.approve
+
+        @application.approve?
+
+        expect(@application.status).to eq('accepted')
+      end
+
+      it 'updates approved application pets to adoptable false' do
+        @application.add_pet(@pet_1.id)
+        @application.add_pet(@pet_2.id)
+        pet_application_1 = PetApplication.locate_record(@application.id, @pet_1.id)
+        pet_application_2 = PetApplication.locate_record(@application.id, @pet_2.id)
+        pet_application_1.approve
+        pet_application_2.approve
+
+        expect(@pet_1.adoptable).to eq(true)
+        expect(@pet_2.adoptable).to eq(true)
+
+        @application.approve?
+
+        updated_pet_1 = Pet.find(@pet_1.id)
+        updated_pet_2 = Pet.find(@pet_2.id)
+
+        expect(updated_pet_1.adoptable).to eq(false)
+        expect(updated_pet_2.adoptable).to eq(false)
+      end
+    end
   end
 end
