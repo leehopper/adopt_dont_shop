@@ -78,5 +78,79 @@ RSpec.describe 'the admin shelter show page' do
         expect(page).to_not have_content(@pet_3.name)
       end
     end
+
+    it 'displays links to open applicaitons for each pet' do
+      visit "/admin/shelters/#{@shelter_1.id}"
+
+      application_2 = Application.create!(name: 'Lee', street_address: '1234 Random St', city: 'Englewood', state: 'CO', zip_code: '80205', description: 'Because I am the best', status: 'pending')
+
+      @application.pets << @pet_1
+      @application.pets << @pet_2
+      application_2.pets << @pet_1
+      application_2.pets << @pet_3
+      @application.submit('Test')
+      application_2.submit('Test')
+
+      visit "/admin/shelters/#{@shelter_1.id}"
+
+      within("#pet-#{@pet_1.id}") do
+        expect(page).to have_selector(:link_or_button, "#{@application.name} Application")
+        expect(page).to have_selector(:link_or_button, "#{application_2.name} Application")
+      end
+
+      within("#pet-#{@pet_2.id}") do
+        expect(page).to have_selector(:link_or_button, "#{@application.name} Application")
+      end
+
+      within("#pet-#{@pet_3.id}") do
+        expect(page).to have_selector(:link_or_button, "#{application_2.name} Application")
+      end
+    end
+
+    it 'routes links to applicaiton show page for each pet' do
+      visit "/admin/shelters/#{@shelter_1.id}"
+
+      application_2 = Application.create!(name: 'Lee', street_address: '1234 Random St', city: 'Englewood', state: 'CO', zip_code: '80205', description: 'Because I am the best', status: 'pending')
+
+      @application.pets << @pet_1
+      @application.pets << @pet_2
+      application_2.pets << @pet_1
+      application_2.pets << @pet_3
+      @application.submit('Test')
+      application_2.submit('Test')
+
+      visit "/admin/shelters/#{@shelter_1.id}"
+
+      within("#pet-#{@pet_1.id}") do
+        click_button "#{@application.name} Application"
+      end
+
+      expect(current_path).to eq("/admin/applications/#{@application.id}")
+      expect(page).to have_content(@application.name)
+      expect(page).to have_content(@application.street_address)
+      expect(page).to have_content(@application.status)
+
+      visit "/admin/shelters/#{@shelter_1.id}"
+
+      within("#pet-#{@pet_1.id}") do
+        click_button "#{application_2.name} Application"
+      end
+
+      expect(current_path).to eq("/admin/applications/#{application_2.id}")
+      expect(page).to have_content(application_2.name)
+      expect(page).to have_content(application_2.street_address)
+      expect(page).to have_content(application_2.status)
+
+      visit "/admin/shelters/#{@shelter_1.id}"
+      
+      within("#pet-#{@pet_2.id}") do
+        click_button "#{@application.name} Application"
+      end
+
+      expect(current_path).to eq("/admin/applications/#{@application.id}")
+      expect(page).to have_content(@application.name)
+      expect(page).to have_content(@application.street_address)
+      expect(page).to have_content(@application.status)
+    end
   end
 end

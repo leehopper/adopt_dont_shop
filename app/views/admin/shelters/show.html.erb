@@ -12,11 +12,17 @@
   <% end %>
 </section>
 
+<br>
 <section id="action_required">
   <h3>Action Required</h3>
   <% if @pets_with_pending_app.count > 1 %>
     <% @pets_with_pending_app.each.with_index do |pet, index| %>
-      <p><b><%= (index + 1) %>. <%= pet.name %></b></p>
+      <div id="pet-<%= pet.id %>"> 
+        <p><b><%= (index + 1) %>.</b> <%= pet.name %></p>
+        <% pet.applications.each do |app| %>
+          <%= button_to "#{app.name} Application", "/admin/applications/#{app.id}", method: :get %>
+        <% end %>
+      </div>
     <% end %>
   <% else %>
     <p><b>No pets with pending applicaitons</b></p>
