@@ -11,3 +11,14 @@
     <p><b>NO PETS</b></p>
   <% end %>
 </section>
+
+<section id="action_required">
+  <h3>Action Required</h3>
+  <% if @pets_with_pending_app.count > 1 %>
+    <% @pets_with_pending_app.each.with_index do |pet, index| %>
+      <p><b><%= (index + 1) %>. <%= pet.name %></b></p>
+    <% end %>
+  <% else %>
+    <p><b>No pets with pending applicaitons</b></p>
+  <% end %>
+</section>
