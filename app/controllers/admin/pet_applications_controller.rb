@@ -1,8 +1,12 @@
 class Admin::PetApplicationsController < ApplicationsController
   def update
-    pet_application = PetApplication.where(application_id: params[:id], pet_id: params[:pet])
+    pet_application = PetApplication.locate_record(params[:id], params[:pet])
 
-    pet_application.update(approval_status: params[:status])
-    redirect_to "/admin/applications/#{params[:id]}"
+    if pet_application.approve
+      redirect_to "/admin/applications/#{params[:id]}"
+    else
+      redirect_to "/admin/applications/#{params[:id]}"
+      flash[:alert] = "Error: #{error_message(application.errors)}"
+    end 
   end
 end
