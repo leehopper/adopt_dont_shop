@@ -76,5 +76,18 @@ RSpec.describe Application, type: :model do
         expect(@application.denied_pets).to eq([@pet_1])
       end
     end
+
+    describe '#pending_pets' do
+      it 'returns list of applications pending pets' do
+        @application.add_pet(@pet_1.id)
+        @application.add_pet(@pet_2.id)
+        pet_application_1 = PetApplication.locate_record(@application.id, @pet_1.id)
+        pet_application_2 = PetApplication.locate_record(@application.id, @pet_2.id)
+        pet_application_1.deny
+
+        expect(pet_application_2.approval_status).to eq('pending')
+        expect(@application.pending_pets).to eq([@pet_2])
+      end
+    end
   end
 end
