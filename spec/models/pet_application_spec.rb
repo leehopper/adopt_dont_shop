@@ -39,5 +39,17 @@ RSpec.describe PetApplication, type: :model do
         expect(pet_application.approval_status).to eq('approved')
       end
     end
+
+    describe '#deny' do
+      it 'returns PetApplication instance with status denied' do
+        pet_application = PetApplication.locate_record(@application.id, @pet_1.id)
+
+        expect(pet_application.approval_status).to eq('pending')
+
+        pet_application.deny
+
+        expect(pet_application.approval_status).to eq('denied')
+      end
+    end
   end
 end
