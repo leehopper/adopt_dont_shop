@@ -5,7 +5,8 @@
   <h3>Statistics</h3>
   <% if @adoptable_average_age > 0 %>
     <p><b>Average Age of Adoptable Pets: </b><%= @adoptable_average_age %></p>
+    <p><b>Total Adoptable Pets: </b><%= @total_adoptable_pets %></p>
   <% else %>
-    <p><b>Average Age of Adoptable Pets: </b>NO PETS</p>
+    <p><b>NO PETS</b></p>
   <% end %>
 </section>
