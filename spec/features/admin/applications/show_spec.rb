@@ -208,4 +208,30 @@ RSpec.describe 'the admin application' do
     expect(page).to have_content('false')
     expect(page).to_not have_content('true')
   end
+
+  it 'removes approve button for pets with an approved app on pending apps' do
+    application_2 = Application.create!(name: 'Natalie', street_address: '1234 Random St', city: 'Englewood', state: 'CO', zip_code: '80205', description: 'Because I am the best', status: 'pending')
+
+    application_2.pets << @pet_1
+    application_2.pets << @pet_3
+
+    visit "/admin/applications/#{@application.id}"
+
+    click_button "Approve #{@pet_1.name}"
+    click_button "Approve #{@pet_2.name}"
+
+    visit "/admin/applications/#{application_2.id}"
+    save_and_open_page
+
+    within("#pet-#{@pet_1.id}") do
+      expect(page).to_not have_selector(:link_or_button, "Approve #{@pet_1.name}")
+      expect(page).to have_selector(:link_or_button, "Deny #{@pet_1.name}")
+      expect(page).to have_content("#{@pet_1.name} has been approved for adoption")
+    end
+
+    within("#pet-#{@pet_3.id}") do
+      expect(page).to have_selector(:link_or_button, "Approve #{@pet_3.name}")
+      expect(page).to have_selector(:link_or_button, "Deny #{@pet_3.name}")
+    end
+  end
 end
