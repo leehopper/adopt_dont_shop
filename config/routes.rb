@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   resources :shelters, :pets, :veterinary_offices, :veterinarians
-
+  
   get '/', to: 'application#welcome'
 
   get '/applications/new', to: 'applications#new'

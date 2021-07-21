@@ -29,25 +29,25 @@ RSpec.describe 'the pets index' do
     end
   end
 
-  describe 'hyperlinks' do
-    it 'displays a link to edit each pet' do
+  describe 'hyperlinks and buttons' do
+    it 'displays a button to edit each pet' do
       visit '/pets'
 
-      expect(page).to have_content("Edit #{@pet_1.name}")
-      expect(page).to have_content("Edit #{@pet_2.name}")
+      expect(page).to have_selector(:link_or_button, "Edit #{@pet_1.name}")
+      expect(page).to have_selector(:link_or_button, "Edit #{@pet_2.name}")
 
-      click_link("Edit #{@pet_1.name}")
+      click_button("Edit #{@pet_1.name}")
 
       expect(page).to have_current_path("/pets/#{@pet_1.id}/edit")
     end
 
-    it 'displays a link to delete each pet' do
+    it 'displays a button to delete each pet' do
       visit '/pets'
 
-      expect(page).to have_content("Delete #{@pet_1.name}")
-      expect(page).to have_content("Delete #{@pet_2.name}")
+      expect(page).to have_selector(:link_or_button, "Delete #{@pet_1.name}")
+      expect(page).to have_selector(:link_or_button, "Delete #{@pet_2.name}")
 
-      click_link("Delete #{@pet_1.name}")
+      click_button("Delete #{@pet_1.name}")
 
       expect(page).to have_current_path("/pets")
       expect(page).to_not have_content(@pet_1.name)
