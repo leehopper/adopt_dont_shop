@@ -97,6 +97,9 @@ RSpec.describe Shelter, type: :model do
       it 'returns the average age of adoptable pets' do
         expect(@shelter_1.adoptable_average_age).to eq(4)
       end
+      it 'returns no pets if no pets on application' do
+        expect(@shelter_2.adoptable_average_age).to eq(0)
+      end
     end
   end
 end

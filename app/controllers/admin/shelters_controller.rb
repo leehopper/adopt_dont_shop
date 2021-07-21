@@ -7,5 +7,8 @@ class Admin::SheltersController < ApplicationController
   def show
     #raw sequel as practice per project user story instructions
     @attributes = Shelter.find_by_sql([ "SELECT name, city FROM shelters WHERE id = ? LIMIT 1;", "#{params[:id]}" ]).first
+
+    shelter = Shelter.find(params[:id])
+    @adoptable_average_age = shelter.adoptable_average_age
   end
 end
