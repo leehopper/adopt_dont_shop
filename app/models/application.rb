@@ -25,4 +25,12 @@ class Application < ApplicationRecord
   def pending_pets
     pets.where('pet_applications.approval_status = ?', 0)
   end
+
+  def approve?
+    if pending_pets.count == 0 && denied_pets.count == 0
+      update(status: 'accepted')
+    elsif pending_pets.count == 0
+      update(status: 'rejected')
+    end 
+  end
 end
