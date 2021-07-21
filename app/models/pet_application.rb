@@ -11,4 +11,8 @@ class PetApplication < ApplicationRecord
   def approve
     update(approval_status: 'approved')
   end
+
+  def deny
+    update(approval_status: 'denied')
+  end
 end
