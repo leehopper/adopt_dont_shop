@@ -56,9 +56,24 @@ RSpec.describe Application, type: :model do
     end
 
     describe '#approved_pets' do
-      xit 'returns list of applications approved pets' do
+      it 'returns list of applications approved pets' do
+        @application.add_pet(@pet_1.id)
+        pet_application = PetApplication.locate_record(@application.id, @pet_1.id)
+        pet_application.approve
 
+        expect(pet_application.approval_status).to eq('approved')
         expect(@application.approved_pets).to eq([@pet_1])
+      end
+    end
+
+    describe '#denied_pets' do
+      it 'returns list of applications denied pets' do
+        @application.add_pet(@pet_1.id)
+        pet_application = PetApplication.locate_record(@application.id, @pet_1.id)
+        pet_application.deny
+
+        expect(pet_application.approval_status).to eq('denied')
+        expect(@application.denied_pets).to eq([@pet_1])
       end
     end
   end
