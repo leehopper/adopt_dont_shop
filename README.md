@@ -4,7 +4,7 @@ Module 2 individual project for the Turing School of Software and Design. Learni
 
 ### Heroku deployment here: https://still-dusk-90697.herokuapp.com/
 
-
+---
 
 ## Learning Goals
 
