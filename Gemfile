@@ -36,6 +36,11 @@ gem 'jbuilder', '~> 2.5'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
 
+#Bootstrap
+gem 'bootstrap', '~> 5.0.1'
+gem 'jquery-rails'
+gem 'sprockets-rails', :require => 'sprockets/railtie'
+
 group :development, :test do
   gem 'capybara'
   gem 'shoulda-matchers'
